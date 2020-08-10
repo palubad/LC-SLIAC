@@ -6,6 +6,7 @@ var LIACorrection = function (S1Collection,
                               boundingBoxSize, 
                               referenceAngle) {
 
+// set the optional parameters of the function
 landCoverType = 311 || 312; // set 312 for coniferous and 311 for broad-leaved forest
 boundingBoxSize = boundingBoxSize || 10000; // 10000 for a 20x20 km bouding box
 referenceAngle = referenceAngle || 9999; // type 9999 if you want to calculate with the mean angle
@@ -26,7 +27,7 @@ var sentinel1DESCDB = S1Collection
 var aspect = ee.Terrain.aspect(srtm).multiply(Math.PI/180).clip(bufferForRndData);
 var slope = ee.Terrain.slope(srtm).multiply(Math.PI/180).clip(bufferForRndData);
 
-//////////////////Function to CREATE LIA for ASCENDING images/////////
+//////////////////Function to CREATE LIA for ASCENDING images//////////////////
 
 // Function to calculate true azimuth direction for  the near range image edge
 var createLIAASC = function (img) {
@@ -77,7 +78,7 @@ var createLIAASC = function (img) {
 
 };
 
-/////////Function to CREATE LIA for DESCENDING images/////////
+//////////////////Function to CREATE LIA for DESCENDING images//////////////////
 
 var createLIADESC = function (img) {
   
@@ -136,11 +137,9 @@ var LIAImgDESC = sentinel1DESCDB.map(createLIADESC).map(clipCollection);
 // Merge databases of Descending and Ascending images, sort by time
 var LIAImages = (LIAImgDESC.merge(LIAImgASC)).sort('system:time_start');
 
-//////////////////////////////////////////////////////////////////
-
+////////////////////////////////////////////////////////////////////////
 
 // Create a forest mask for data
-
 // Hansen Global forest - Select areas with forest loss from 2000 till 2018
 var maskedLoss2018 = gfc2018.updateMask(gfc2018.select('lossyear').lt(1));
 // Select pixels with >50% tree cover and mask out region with forest loss
@@ -157,8 +156,7 @@ var CorineAndHansen = corineConiferuous.updateMask(maskedForest.select('treecove
 // Convert CorineAndHansen raster to vectors
 var forestsInVectors = CorineAndHansen.reduceToVectors();
 
-///////////////////////////////////////////////////////////////////////////
-
+////////////////////////////////////////////////////////////////////////
 
 // Get regression parameters as image property
 var getRegressionParamaters = function (img) {
@@ -272,6 +270,5 @@ return correctedValues;
   
 };
 
-
-// export function
+// export the function
 exports.LIACorrection = LIACorrection;
