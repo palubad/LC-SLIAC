@@ -19,11 +19,18 @@ or by copying the code in the "LIA_Correction_Function_for_GEE.js" to your code 
 
 #### Parameters of the function:
   - ROI (type Geometry)
+      Define the ROI for what you want to create a Time Series Analysis
   - startDate (type Date)
+      Start date of the Time Series
   - endDate (type Date)
-  - landCoverType (type Integer) // 312 for coniferous forest and 311 for broadleaf forest
+      End date of the Time Series
+  - landCoverType (type Integer)
+      Define the land cover type. Currently supported for coniferous forest (312) and broadleaf forest (311).
   - boudningBoxSize (type Integer, *optional, default: 10000*)
+      The bounding box size around the selected area to calculate the backscatter-LIA dependence.
   - referenceAngle (type Integer, *optional, deafault: 9999* = mean angle from found LIAs)
+      Reference angle to which the backscatter values will be corrected. The default is the mean value from the minimum and maximum value of observed LIA (from the available paths).
   - SARCollection (type ImageCollection, *optional, default: Sentinel-1 Image Collection with VV and VH bands*)
-  - acquistionMode (type String, optional, *default: 'IW' as Interferometric Wide Swath*)
-  
+      Select the SAR image collection for which you want to apply the LIA correction. Tested for Sentinel-1 data
+  - acquistionMode (type String, optional, *default: 'IW'*)
+      Acqusition mode for Sentinel-1 data in GEE can be 'IW' - Interferometric Wide Swath or 'EW' - Extra Wide Swath
