@@ -77,6 +77,8 @@ var createLIAASC = function (img) {
   var azimuth = (Ydiff.divide(Xdiff)).atan().multiply(180/Math.PI).add(270.0);
   // azimuth = 360 - (90 - x)   -->   x + 270!
 
+  var azimuthViewAngle = azimuth.subtract(270);
+  
   // Then calculate the viewing angle 
   var azimuthViewIMG = ee.Image(azimuth.subtract(270)).rename('AzimuthLook_ASC');
   
@@ -88,7 +90,7 @@ var createLIAASC = function (img) {
   .subtract(slopeReproj.sin().multiply(s1_inc.sin().multiply((aspectReproj.subtract(azimuthViewIMG.multiply(Math.PI/180))).cos())))).acos()
   .clip(ee.Geometry.Polygon(img.geometry().coordinates().get(0))).multiply(180/Math.PI).rename('LIA');
 
-  return img.addBands([LIAimg]).setMulti({azimuthViewIMG: azimuthViewIMG});
+  return img.addBands([LIAimg]).setMulti({lookAngleAzimuth: azimuthViewAngle});
 
 };
 
@@ -125,6 +127,8 @@ var createLIADESC = function (img) {
   var azimuth = ee.Number(90).subtract((Ydiff.divide(Xdiff)).atan().multiply(180/Math.PI)).add(180);
   // azimuth = 90 - azimuth + 180
 
+  var azimuthViewAngle = azimuth.add(90);
+  
   // Then calculate the azimuth viewing angle 
   var azimuthViewIMG = ee.Image(azimuth.add(90)).rename('AzimuthLook_Desc');
   
@@ -136,7 +140,7 @@ var createLIADESC = function (img) {
   .subtract(slopeReproj.sin().multiply(s1_inc.sin().multiply((aspectReproj.subtract(azimuthViewIMG.multiply(Math.PI/180))).cos())))).acos()
   .clip(ee.Geometry.Polygon(img.geometry().coordinates().get(0))).multiply(180/Math.PI).rename('LIA');
 
-  return img.addBands([LIAimg]).setMulti({azimuthViewIMG: azimuthViewIMG});
+  return img.addBands([LIAimg]).setMulti({lookAngleAzimuth: azimuthViewAngle});
 };
 
 // Apply the function to the Sentinel1 collection
