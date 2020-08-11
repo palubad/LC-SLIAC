@@ -1,10 +1,11 @@
-var LIACorrection = function (S1Collection, 
-                              ROI,
+var LIACorrection = function (ROI,
                               startDate,
                               endDate,
                               landCoverType,
                               boundingBoxSize, 
-                              referenceAngle) {
+                              referenceAngle,
+                              SARCollection,
+                              acquisitionMode) {
 
 // set the optional parameters of the function
 boundingBoxSize = boundingBoxSize || 10000; // 10000 for a 20x20 km bouding box
