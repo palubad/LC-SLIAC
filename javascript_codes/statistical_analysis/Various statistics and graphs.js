@@ -152,20 +152,10 @@ var VVxLIA = arrayLIA.zip(arrayVV);
 var Corrected_VHxLIA = arrayLIA.zip(arrayCorrected_VH);
 var Corrected_VVxLIA = arrayLIA.zip(arrayCorrected_VV);
 
-// Calculate statistics 
+// Calculate statistics  for forest points within a study area with defined central point
 var VHExtremes = arrayVH.sort();
 var VVExtremes = arrayVV.sort();
 var LIAExtremes = arrayLIA.sort();
-var VHCorrectedExtremes = arrayCorrected_VH.sort();
-var VVCorrectedExtremes = arrayCorrected_VV.sort();
-var varianceVH = arrayVH.reduce(ee.Reducer.variance());
-var varianceVV = arrayVV.reduce(ee.Reducer.variance());
-var varianceCorrectedVH = arrayCorrected_VH.reduce(ee.Reducer.variance());
-var varianceCorrectedVV = arrayCorrected_VV.reduce(ee.Reducer.variance());
-var stdevVH = arrayVH.reduce(ee.Reducer.stdDev());
-var stdevVV = arrayVV.reduce(ee.Reducer.stdDev());
-var stdevCorrectedVH = arrayCorrected_VH.reduce(ee.Reducer.stdDev());
-var stdevCorrectedVV = arrayCorrected_VV.reduce(ee.Reducer.stdDev());
 var perc75VV = ee.Number(arrayVV.reduce(ee.Reducer.percentile([75])));
 var perc25VV = ee.Number(arrayVV.reduce(ee.Reducer.percentile([25])));
 var lowerFenceVV = perc25VV.subtract(ee.Number(1.5).multiply(perc75VV.subtract(perc25VV)));
@@ -192,7 +182,7 @@ var betweenFencesCorrVH = arrayCorrected_VH.filter(ee.Filter.and(ee.Filter.great
                       ee.Filter.lessThan('item', upperFenceCorrVH)));
 
 
-// Create a dictionary with calculated values
+// Create a dictionary with calculated statistics
 var CorrectionStats = ({
 'VH min': VHExtremes.get(0), 
 'VH max' : VHExtremes.get(-1),
@@ -201,21 +191,21 @@ var CorrectionStats = ({
 'VV lower fence Corrected': lowerFenceCorrVV,
 'VV upper fence Corrected': upperFenceCorrVV,
 'VV variance': betweenFencesVV.reduce(ee.Reducer.variance()),
-'VV variance Corr': betweenFencesCorrVV.reduce(ee.Reducer.variance()),
+'VV variance Corrected': betweenFencesCorrVV.reduce(ee.Reducer.variance()),
 'VV Stdev': betweenFencesVV.reduce(ee.Reducer.stdDev()),
-'VV Stdev Corr': betweenFencesCorrVV.reduce(ee.Reducer.stdDev()),
+'VV Stdev Corrected': betweenFencesCorrVV.reduce(ee.Reducer.stdDev()),
 'VV max-min': ee.Number(betweenFencesVV.sort().get(-1)).subtract(ee.Number(betweenFencesVV.sort().get(0))),
-'VV max-min Corr': ee.Number(betweenFencesCorrVV.sort().get(-1)).subtract(ee.Number(betweenFencesCorrVV.sort().get(0))),
+'VV max-min v': ee.Number(betweenFencesCorrVV.sort().get(-1)).subtract(ee.Number(betweenFencesCorrVV.sort().get(0))),
 'VH lower fence': lowerFenceVH,
 'VH upper fence': upperFenceVH,
 'VH lower fence Corrected': lowerFenceCorrVH,
 'VH upper fence Corrected': upperFenceCorrVH,
 'VH variance': betweenFencesVH.reduce(ee.Reducer.variance()),
-'VH variance Corr': betweenFencesCorrVH.reduce(ee.Reducer.variance()),
+'VH variance Corrected': betweenFencesCorrVH.reduce(ee.Reducer.variance()),
 'VH Stdev': betweenFencesVH.reduce(ee.Reducer.stdDev()),
-'VH Stdev Corr': betweenFencesCorrVH.reduce(ee.Reducer.stdDev()),
+'VH Stdev Corrected': betweenFencesCorrVH.reduce(ee.Reducer.stdDev()),
 'VH max-min': ee.Number(betweenFencesVH.sort().get(-1)).subtract(ee.Number(betweenFencesVH.sort().get(0))),
-'VH max-min Corr': ee.Number(betweenFencesCorrVH.sort().get(-1)).subtract(ee.Number(betweenFencesCorrVH.sort().get(0))),
+'VH max-min Corrected': ee.Number(betweenFencesCorrVH.sort().get(-1)).subtract(ee.Number(betweenFencesCorrVH.sort().get(0))),
 'range VH': ee.Number(VHExtremes.get(-1)).subtract(ee.Number(VHExtremes.get(0))),
 'VV min': VVExtremes.get(0), 
 'VV max' : VVExtremes.get(-1),
@@ -223,23 +213,10 @@ var CorrectionStats = ({
 'LIA min': LIAExtremes.get(0), 
 'LIA max' : LIAExtremes.get(-1),
 'range LIA': ee.Number(LIAExtremes.get(-1)).subtract(ee.Number(LIAExtremes.get(0))),
-'Corrected VH min': VHCorrectedExtremes.get(0), 
-'Corrected VH max' : VHCorrectedExtremes.get(-1),
-'range Corrected VH': ee.Number(VHCorrectedExtremes.get(-1)).subtract(ee.Number(VHCorrectedExtremes.get(0))),
-'Corrected VV min': VVCorrectedExtremes.get(0), 
-'Corrected VV max' : VVCorrectedExtremes.get(-1),
-'range Corrected VV': ee.Number(VVCorrectedExtremes.get(-1)).subtract(ee.Number(VVCorrectedExtremes.get(0))),
-'variance VH': varianceVH,
-'variance VV': varianceVV,
-'variance Corrected VH': varianceCorrectedVH,
-'variance Corrected VV': varianceCorrectedVV,
-'stdev VH': stdevVH,
-'stdev VV': stdevVV,
-'stdev Corrected VH': stdevCorrectedVH,
-'stdev Corrected VV': stdevCorrectedVV
 });
 
-print('Overall Statistics', CorrectionStats);
+print('Overall Statistics of forest points', CorrectionStats);
+
 
 
 ///////////////////////////////////////////////////////////////////////
