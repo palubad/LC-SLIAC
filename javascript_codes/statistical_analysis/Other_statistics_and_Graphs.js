@@ -1,7 +1,7 @@
 // call the LIACorrection function
 var LIACorrection = require('users/danielp/LIA_Correction:LIA_Correction_Function')
 
-var coordinates = [20.00875081483153, 48.956919483117055] // for study area 1
+var coordinates = [20.00875081483153, 48.956919483117055] // central point for study area 1
 
 // Set parameters for the function
 var ROI = ee.Geometry.Point(coordinates),
