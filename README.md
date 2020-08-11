@@ -1,1 +1,2 @@
-# LIA-Correction-for-GEE---Diploma-Thesis
+# LIA Correction for Google Earth Engine 
+(part of my DiplomaThesis)
