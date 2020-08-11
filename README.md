@@ -33,4 +33,4 @@ or by copying the code in the "LIA_Correction_Function_for_GEE.js" to your code 
   - SARCollection (type ImageCollection, *optional, default: Sentinel-1 Image Collection with VV and VH bands*)
       - Select the SAR image collection for which you want to apply the LIA correction. Tested for Sentinel-1 data
   - acquistionMode (type String, optional, *default: 'IW'*)
-      - Acqusition mode for Sentinel-1 data in GEE can be 'IW' - Interferometric Wide Swath or 'EW' - Extra Wide Swath
+      - Acqusition mode for Sentinel-1 data in GEE can be 'IW' (Interferometric Wide Swath), 'EW' (Extra Wide Swath) or 'SM' (Strip Map)
