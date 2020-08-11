@@ -218,13 +218,23 @@ var getRegressionParamaters = function (img) {
   var VHxLIA = LIA.zip(VH);
   var VVxLIA = LIA.zip(VV);
   
-  // Add regression values and number of used points to the image properties
+  // Add regression coefficient and other statistics to the image properties
   var VHregressionValues = VHxLIA.reduce(ee.Reducer.linearFit());
   var VVregressionValues = VVxLIA.reduce(ee.Reducer.linearFit());
   var VHscale = ee.Dictionary(VHregressionValues).get('scale');
   var VVscale = ee.Dictionary(VVregressionValues).get('scale');
+  var VHoffset = ee.Dictionary(VHregressionValues).get('offset');
+  var VVoffset = ee.Dictionary(VVregressionValues).get('offset');
+  var numpts = pointsWithValue.size();
+  var VHcorrelationCoefficient = VHxLIA.reduce(ee.Reducer.pearsonsCorrelation());
+  var VVcorrelationCoefficient = VVxLIA.reduce(ee.Reducer.pearsonsCorrelation());
+  var VHR2 = ee.Number(ee.Dictionary(VHcorrelationCoefficient).get('correlation')).pow(2);
+  var VVR2 = ee.Number(ee.Dictionary(VVcorrelationCoefficient).get('correlation')).pow(2);
+  var VHpValue = ee.Number(ee.Dictionary(VHcorrelationCoefficient).get('p-value'));
+  var VVpValue = ee.Number(ee.Dictionary(VVcorrelationCoefficient).get('p-value'));
 
-  return img.setMulti({VVscale: VVscale, VHscale: VHscale
+  return img.setMulti({VVscale: VVscale, VHscale: VHscale, VVoffset: VVoffset, VHoffset: VHoffset,
+  numberOfForestPoints: numpts, VHR2: VHR2, VVR2: VVR2, VHpValue: VHpValue, VVpValue: VVpValue,
   });
   
 };
