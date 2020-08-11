@@ -7,11 +7,24 @@ var LIACorrection = function (S1Collection,
                               referenceAngle) {
 
 // set the optional parameters of the function
-landCoverType = 311 || 312; // set 312 for coniferous and 311 for broad-leaved forest
 boundingBoxSize = boundingBoxSize || 10000; // 10000 for a 20x20 km bouding box
-referenceAngle = referenceAngle || 9999; // type 9999 if you want to calculate with the mean angle
+referenceAngle = referenceAngle || 9999; // 9999 to calculate with the mean angle
+acquisitionMode = acquisitionMode || 'IW';
+SARCollection = SARCollection || S1Collection;
+
+// select the Sentinel-1 Image Collection
+var S1Collection = ee.ImageCollection('COPERNICUS/S1_GRD')
+                  .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
+                  .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VH'))
+                  .filter(ee.Filter.eq('instrumentMode', acquisitionMode))
+                  .filterBounds(ROI)
+                  .filterDate(startDate, endDate);
 
 ////////////////////////////////////////////////////////////////////////////////////////////
+
+var srtm = ee.Image("USGS/SRTMGL1_003"),
+    gfc2018 = ee.Image("UMD/hansen/global_forest_change_2018_v1_6"),
+    corineDB = ee.Image("COPERNICUS/CORINE/V20/100m/2018");  
 
 // Create 20x20 km bounding box around the selected point 
 var bufferForRndData = (ROI.buffer(boundingBoxSize)).bounds();
