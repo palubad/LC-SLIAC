@@ -1,5 +1,5 @@
 // call the function
-var LIACorrection = require('users/danielp/Radar_Vegetation_Index_1st_try:LIA_Correction_function')
+var LIACorrection = require('users/danielp/LIA_Correction:LIA_Correction_Function');
 
 // polygon drawed into the Map using the Geometry Tools
 var geometry = ee.Geometry.Polygon(
@@ -12,8 +12,8 @@ var geometry = ee.Geometry.Polygon(
 var ROI = geometry,
     startDate = '2019-06-01',
     endDate = '2019-09-01',
-    landCoverType = 312;
-// boundingBoxSize and referenceAngle parameters are optional
+    landCoverType = 312; // 312 for coniferous forest
+// boundingBoxSize, referenceAngle, SARCollection and acquisitionMode are left default
 
 
 // select the Sentinel-1 Image Collection
