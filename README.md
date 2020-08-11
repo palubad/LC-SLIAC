@@ -1,5 +1,5 @@
 # LIA Correction for Google Earth Engine 
-##(part of my Diploma Thesis)
+## (part of my Diploma Thesis)
 
 This code repository is an attachment for my Diploma Thesis "A correction of the local incidence angle of SAR data: a land-cover specific approach for time series analysis".
 The repository contains a folder "javascript_codes" where you can find: 
