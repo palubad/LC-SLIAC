@@ -1,7 +1,7 @@
 // call the LIACorrection function
 var LIACorrection = require('users/danielp/LIA_Correction:LIA_Correction_Function')
 
-var coordinates = [20.00875081483153,48.956919483117055] // for study area 1
+var coordinates = [20.00875081483153, 48.956919483117055] // for study area 1
 
 // Set parameters for the function
 var ROI = ee.Geometry.Point(coordinates),
@@ -12,10 +12,10 @@ var ROI = ee.Geometry.Point(coordinates),
 
 // Apply the LIA Correction function
 var CorrectedCollection = LIACorrection.LIACorrection(
-                          ROI,
-                          startDate,
-                          endDate,
-                          landCoverType);
+    ROI,
+    startDate,
+    endDate,
+    landCoverType);
 
 // Create buffer around the selected central point (for TS analyses) 
 var bufferROI = ROI.buffer(20);
@@ -33,13 +33,13 @@ var getNumPts = CorrectedCollection.aggregate_mean('numpts');
 
 // Create a dictionary from these statisfics
 var RegressionStats = ({
-'Scale Mean VH': getMeanVHScale,
-'Scale Mean VV': getMeanVVScale,
-'R2 Mean VH': getMeanR2VH,
-'R2 Mean VV': getMeanR2VV,
-'p-value Mean VH': getMean_pValueVH,
-'p-value Mean VV':getMean_pValueVV,
-'Points number of points': getNumPts,
+    'Scale Mean VH': getMeanVHScale,
+    'Scale Mean VV': getMeanVVScale,
+    'R2 Mean VH': getMeanR2VH,
+    'R2 Mean VV': getMeanR2VV,
+    'p-value Mean VH': getMean_pValueVH,
+    'p-value Mean VV': getMean_pValueVV,
+    'Points number of points': getNumPts,
 });
 
 print('Regression statistics', RegressionStats);
@@ -66,76 +66,78 @@ var CorineAndHansen = corineConiferuous.updateMask(maskedForest.select('treecove
 var forestsInVectors = CorineAndHansen.reduceToVectors();
 
 // Function to generate list of feature classes of forest points
-var list = CorrectedCollection.limit(1).iterate(function(img, container){
-  container = ee.List(container);
+var list = CorrectedCollection.limit(1).iterate(function(img, container) {
+    container = ee.List(container);
 
-  // Create 1000 random points in the footprint area
-  var randomPoints = ee.FeatureCollection.randomPoints(ROI.buffer(10000).bounds(), 1000, 40);
-  var calculatedPoints = CorineAndHansen.reduceRegions({
-    collection: randomPoints,
-    reducer: ee.Reducer.mean(), 
-    scale: 10,
-  });
-  // Select points which fall into the masked forest region
-  var treePoints = calculatedPoints.filter(ee.Filter.notNull(['mean']));
-  
-  // Create buffer around tree points
-  var bufferTreePointsFc = function (feature) {
-    return feature.buffer(20);
-  };
-  var bufferTreePoints = treePoints.map(bufferTreePointsFc);
-  
-  // Intersection of buffered tree points and forest database
-  var selectedPoints = bufferTreePoints.geometry().intersection(forestsInVectors.geometry(), 0.1);
-  // Create a feature collection and set the area of intersected buffers as property
-  var selectedPointsFinal = ee.FeatureCollection((selectedPoints.geometries().map(function(feature) {
-    return ee.Feature(ee.Geometry(feature)).setMulti({area: ee.Geometry(feature).area().round()});
-  })));
-  
+    // Create 1000 random points in the footprint area
+    var randomPoints = ee.FeatureCollection.randomPoints(ROI.buffer(10000).bounds(), 1000, 40);
+    var calculatedPoints = CorineAndHansen.reduceRegions({
+        collection: randomPoints,
+        reducer: ee.Reducer.mean(),
+        scale: 10,
+    });
+    // Select points which fall into the masked forest region
+    var treePoints = calculatedPoints.filter(ee.Filter.notNull(['mean']));
+
+    // Create buffer around tree points
+    var bufferTreePointsFc = function(feature) {
+        return feature.buffer(20);
+    };
+    var bufferTreePoints = treePoints.map(bufferTreePointsFc);
+
+    // Intersection of buffered tree points and forest database
+    var selectedPoints = bufferTreePoints.geometry().intersection(forestsInVectors.geometry(), 0.1);
+    // Create a feature collection and set the area of intersected buffers as property
+    var selectedPointsFinal = ee.FeatureCollection((selectedPoints.geometries().map(function(feature) {
+        return ee.Feature(ee.Geometry(feature)).setMulti({
+            area: ee.Geometry(feature).area().round()
+        });
+    })));
+
     // Select the area value that occurs the most often
-  var mostOftenAreaValue = ee.Number(selectedPointsFinal.aggregate_array('area').reduce(ee.Reducer.mode())).round()
-  
-  // Select only forest areas which area did not change = area lying totally in the masked forest region
-  var selectedPointsFinal2 = selectedPointsFinal.filter(ee.Filter.eq('area', mostOftenAreaValue));
+    var mostOftenAreaValue = ee.Number(selectedPointsFinal.aggregate_array('area').reduce(ee.Reducer.mode())).round()
 
-  // Add values of image bands to the "points"
-  var pointsWithValue = ee.Image(img).reduceRegions({
-    collection: selectedPointsFinal2,
-    reducer: ee.Reducer.mean(),
-    scale: 10,
-  });
+    // Select only forest areas which area did not change = area lying totally in the masked forest region
+    var selectedPointsFinal2 = selectedPointsFinal.filter(ee.Filter.eq('area', mostOftenAreaValue));
 
-return container.add(pointsWithValue);
+    // Add values of image bands to the "points"
+    var pointsWithValue = ee.Image(img).reduceRegions({
+        collection: selectedPointsFinal2,
+        reducer: ee.Reducer.mean(),
+        scale: 10,
+    });
+
+    return container.add(pointsWithValue);
 }, ee.List([]));
 // cast the result to ee.List
 list = ee.List(list);
 
 // Functions to create arrays containing all the values (LIA, VH, VV and corrected values) of selected points
-var arrayLIAfc = function (i) {
-  // filter out the points which have no values in the properties
-  var getValues = ee.FeatureCollection(list.get(i)).filter(ee.Filter.notNull(['VH', 'VV', 'LIA']));
-  var LIA = getValues.aggregate_array('LIA');
-  return LIA;
+var arrayLIAfc = function(i) {
+    // filter out the points which have no values in the properties
+    var getValues = ee.FeatureCollection(list.get(i)).filter(ee.Filter.notNull(['VH', 'VV', 'LIA']));
+    var LIA = getValues.aggregate_array('LIA');
+    return LIA;
 };
-var arrayVHfc = function (i) {
-  var getValues = ee.FeatureCollection(list.get(i)).filter(ee.Filter.notNull(['VH', 'VV', 'LIA']));
-  var VH = getValues.aggregate_array('VH');
-  return VH;
+var arrayVHfc = function(i) {
+    var getValues = ee.FeatureCollection(list.get(i)).filter(ee.Filter.notNull(['VH', 'VV', 'LIA']));
+    var VH = getValues.aggregate_array('VH');
+    return VH;
 };
-var arrayVVfc = function (i) {
-  var getValues = ee.FeatureCollection(list.get(i)).filter(ee.Filter.notNull(['VH', 'VV', 'LIA']));
-  var VV = getValues.aggregate_array('VV');
-  return VV;
+var arrayVVfc = function(i) {
+    var getValues = ee.FeatureCollection(list.get(i)).filter(ee.Filter.notNull(['VH', 'VV', 'LIA']));
+    var VV = getValues.aggregate_array('VV');
+    return VV;
 };
-var arrayCorrected_VVfc = function (i) {
-  var getValues = ee.FeatureCollection(list.get(i)).filter(ee.Filter.notNull(['VH', 'VV', 'LIA']));
-  var Corrected_VV = getValues.aggregate_array('corrected_VV');
-  return Corrected_VV;
+var arrayCorrected_VVfc = function(i) {
+    var getValues = ee.FeatureCollection(list.get(i)).filter(ee.Filter.notNull(['VH', 'VV', 'LIA']));
+    var Corrected_VV = getValues.aggregate_array('corrected_VV');
+    return Corrected_VV;
 };
-var arrayCorrected_VHfc = function (i) {
-  var getValues = ee.FeatureCollection(list.get(i)).filter(ee.Filter.notNull(['VH', 'VV', 'LIA']));
-  var Corrected_VH = getValues.aggregate_array('corrected_VH');
-  return Corrected_VH;
+var arrayCorrected_VHfc = function(i) {
+    var getValues = ee.FeatureCollection(list.get(i)).filter(ee.Filter.notNull(['VH', 'VV', 'LIA']));
+    var Corrected_VH = getValues.aggregate_array('corrected_VH');
+    return Corrected_VH;
 };
 
 // Apply the functions using "map" and create arrays
@@ -172,67 +174,72 @@ var CorrPerc75VH = ee.Number(arrayCorrected_VH.reduce(ee.Reducer.percentile([75]
 var CorrPerc25VH = ee.Number(arrayCorrected_VH.reduce(ee.Reducer.percentile([25])));
 var lowerFenceCorrVH = CorrPerc25VH.subtract(ee.Number(1.5).multiply(CorrPerc75VH.subtract(CorrPerc25VH)));
 var upperFenceCorrVH = CorrPerc75VH.add(ee.Number(1.5).multiply(CorrPerc75VH.subtract(CorrPerc25VH)));
-var betweenFencesVV = arrayVV.filter(ee.Filter.and(ee.Filter.greaterThan('item', lowerFenceVV), 
-                      ee.Filter.lessThan('item', upperFenceVV)));
-var betweenFencesVH = arrayVH.filter(ee.Filter.and(ee.Filter.greaterThan('item', lowerFenceVH), 
-                      ee.Filter.lessThan('item', upperFenceVH)));
-var betweenFencesCorrVV = arrayCorrected_VV.filter(ee.Filter.and(ee.Filter.greaterThan('item', lowerFenceCorrVV), 
-                      ee.Filter.lessThan('item', upperFenceCorrVV)));
-var betweenFencesCorrVH = arrayCorrected_VH.filter(ee.Filter.and(ee.Filter.greaterThan('item', lowerFenceCorrVH), 
-                      ee.Filter.lessThan('item', upperFenceCorrVH)));
+var betweenFencesVV = arrayVV.filter(ee.Filter.and(ee.Filter.greaterThan('item', lowerFenceVV),
+    ee.Filter.lessThan('item', upperFenceVV)));
+var betweenFencesVH = arrayVH.filter(ee.Filter.and(ee.Filter.greaterThan('item', lowerFenceVH),
+    ee.Filter.lessThan('item', upperFenceVH)));
+var betweenFencesCorrVV = arrayCorrected_VV.filter(ee.Filter.and(ee.Filter.greaterThan('item', lowerFenceCorrVV),
+    ee.Filter.lessThan('item', upperFenceCorrVV)));
+var betweenFencesCorrVH = arrayCorrected_VH.filter(ee.Filter.and(ee.Filter.greaterThan('item', lowerFenceCorrVH),
+    ee.Filter.lessThan('item', upperFenceCorrVH)));
 
 
 // Create a dictionary with calculated statistics
 var CorrectionStats = ({
-'VH min': VHExtremes.get(0), 
-'VH max' : VHExtremes.get(-1),
-'VV lower fence': lowerFenceVV,
-'VV upper fence': upperFenceVV,
-'VV lower fence Corrected': lowerFenceCorrVV,
-'VV upper fence Corrected': upperFenceCorrVV,
-'VV variance': betweenFencesVV.reduce(ee.Reducer.variance()),
-'VV variance Corrected': betweenFencesCorrVV.reduce(ee.Reducer.variance()),
-'VV Stdev': betweenFencesVV.reduce(ee.Reducer.stdDev()),
-'VV Stdev Corrected': betweenFencesCorrVV.reduce(ee.Reducer.stdDev()),
-'VV max-min': ee.Number(betweenFencesVV.sort().get(-1)).subtract(ee.Number(betweenFencesVV.sort().get(0))),
-'VV max-min v': ee.Number(betweenFencesCorrVV.sort().get(-1)).subtract(ee.Number(betweenFencesCorrVV.sort().get(0))),
-'VH lower fence': lowerFenceVH,
-'VH upper fence': upperFenceVH,
-'VH lower fence Corrected': lowerFenceCorrVH,
-'VH upper fence Corrected': upperFenceCorrVH,
-'VH variance': betweenFencesVH.reduce(ee.Reducer.variance()),
-'VH variance Corrected': betweenFencesCorrVH.reduce(ee.Reducer.variance()),
-'VH Stdev': betweenFencesVH.reduce(ee.Reducer.stdDev()),
-'VH Stdev Corrected': betweenFencesCorrVH.reduce(ee.Reducer.stdDev()),
-'VH max-min': ee.Number(betweenFencesVH.sort().get(-1)).subtract(ee.Number(betweenFencesVH.sort().get(0))),
-'VH max-min Corrected': ee.Number(betweenFencesCorrVH.sort().get(-1)).subtract(ee.Number(betweenFencesCorrVH.sort().get(0))),
-'range VH': ee.Number(VHExtremes.get(-1)).subtract(ee.Number(VHExtremes.get(0))),
-'VV min': VVExtremes.get(0), 
-'VV max' : VVExtremes.get(-1),
-'range VV': ee.Number(VVExtremes.get(-1)).subtract(ee.Number(VVExtremes.get(0))),
-'LIA min': LIAExtremes.get(0), 
-'LIA max' : LIAExtremes.get(-1),
-'range LIA': ee.Number(LIAExtremes.get(-1)).subtract(ee.Number(LIAExtremes.get(0))),
+    'VH min': VHExtremes.get(0),
+    'VH max': VHExtremes.get(-1),
+    'VV lower fence': lowerFenceVV,
+    'VV upper fence': upperFenceVV,
+    'VV lower fence Corrected': lowerFenceCorrVV,
+    'VV upper fence Corrected': upperFenceCorrVV,
+    'VV variance': betweenFencesVV.reduce(ee.Reducer.variance()),
+    'VV variance Corrected': betweenFencesCorrVV.reduce(ee.Reducer.variance()),
+    'VV Stdev': betweenFencesVV.reduce(ee.Reducer.stdDev()),
+    'VV Stdev Corrected': betweenFencesCorrVV.reduce(ee.Reducer.stdDev()),
+    'VV max-min': ee.Number(betweenFencesVV.sort().get(-1)).subtract(ee.Number(betweenFencesVV.sort().get(0))),
+    'VV max-min v': ee.Number(betweenFencesCorrVV.sort().get(-1)).subtract(ee.Number(betweenFencesCorrVV.sort().get(0))),
+    'VH lower fence': lowerFenceVH,
+    'VH upper fence': upperFenceVH,
+    'VH lower fence Corrected': lowerFenceCorrVH,
+    'VH upper fence Corrected': upperFenceCorrVH,
+    'VH variance': betweenFencesVH.reduce(ee.Reducer.variance()),
+    'VH variance Corrected': betweenFencesCorrVH.reduce(ee.Reducer.variance()),
+    'VH Stdev': betweenFencesVH.reduce(ee.Reducer.stdDev()),
+    'VH Stdev Corrected': betweenFencesCorrVH.reduce(ee.Reducer.stdDev()),
+    'VH max-min': ee.Number(betweenFencesVH.sort().get(-1)).subtract(ee.Number(betweenFencesVH.sort().get(0))),
+    'VH max-min Corrected': ee.Number(betweenFencesCorrVH.sort().get(-1)).subtract(ee.Number(betweenFencesCorrVH.sort().get(0))),
+    'range VH': ee.Number(VHExtremes.get(-1)).subtract(ee.Number(VHExtremes.get(0))),
+    'VV min': VVExtremes.get(0),
+    'VV max': VVExtremes.get(-1),
+    'range VV': ee.Number(VVExtremes.get(-1)).subtract(ee.Number(VVExtremes.get(0))),
+    'LIA min': LIAExtremes.get(0),
+    'LIA max': LIAExtremes.get(-1),
+    'range LIA': ee.Number(LIAExtremes.get(-1)).subtract(ee.Number(LIAExtremes.get(0))),
 });
 
 print('Overall Statistics of forest points', CorrectionStats);
-
 
 
 ///////////////////////////////////////////////////////////////////////
 
 // Function to create a feature collection from arrays with attributes in properties
 // Collection of individual points their values in properties
-var getCollection = function (j) {
-  var FeatureColl1 = new ee.FeatureCollection([]);
-  var getLIA = arrayLIA.get(j);
-  var getVV = arrayVV.get(j);
-  var getVH = arrayVH.get(j);
-  var getCorrected_VV = arrayCorrected_VV.get(j);
-  var getCorrected_VH = arrayCorrected_VH.get(j);
-  var feature = ee.Feature(null, {LIA: getLIA, VV: getVV, VH: getVH, corrected_VV: getCorrected_VV, corrected_VH: getCorrected_VH});
-  
-  return feature;
+var getCollection = function(j) {
+    var FeatureColl1 = new ee.FeatureCollection([]);
+    var getLIA = arrayLIA.get(j);
+    var getVV = arrayVV.get(j);
+    var getVH = arrayVH.get(j);
+    var getCorrected_VV = arrayCorrected_VV.get(j);
+    var getCorrected_VH = arrayCorrected_VH.get(j);
+    var feature = ee.Feature(null, {
+        LIA: getLIA,
+        VV: getVV,
+        VH: getVH,
+        corrected_VV: getCorrected_VV,
+        corrected_VH: getCorrected_VH
+    });
+
+    return feature;
 };
 
 // Apply the function and create a feature collection
@@ -247,71 +254,79 @@ var pointCollection = ee.FeatureCollection(seq2.map(getCollection));
 var selected = pointCollection.limit(pointCollection.size());
 //print(selected, 'selected')
 var originalValuesChartVH = ui.Chart.feature.byFeature(selected, 'LIA', 'VH')
-  .setChartType('ScatterChart')
-  .setOptions({
-    title: 'Scatterplot of original VH values',
-    trendlines: {0: {
-    type: 'linear',
-    color: 'CC0000',
-    showR2: true,
-    visibleInLegend: true
-    }}
-  });
+    .setChartType('ScatterChart')
+    .setOptions({
+        title: 'Scatterplot of original VH values',
+        trendlines: {
+            0: {
+                type: 'linear',
+                color: 'CC0000',
+                showR2: true,
+                visibleInLegend: true
+            }
+        }
+    });
 
 var correctedRegressionChartVH = ui.Chart.feature.byFeature(selected, 'LIA', 'corrected_VH')
-  .setChartType('ScatterChart')
-  .setOptions({
-    title: 'Scatterplot of corrected VH values',
-    trendlines: {0: {
-    type: 'linear',
-    color: 'CC0000',
-    showR2: true,
-    visibleInLegend: true
-    }}
-  });
+    .setChartType('ScatterChart')
+    .setOptions({
+        title: 'Scatterplot of corrected VH values',
+        trendlines: {
+            0: {
+                type: 'linear',
+                color: 'CC0000',
+                showR2: true,
+                visibleInLegend: true
+            }
+        }
+    });
 
 var originalValuesChartVV = ui.Chart.feature.byFeature(selected, 'LIA', 'VV')
-  .setChartType('ScatterChart')
-  .setOptions({
-    title: 'Scatterplot of original VV values',
-    trendlines: {0: {
-    type: 'linear',
-    color: 'CC0000',
-    showR2: true,
-    visibleInLegend: true
-    }}
-  });
+    .setChartType('ScatterChart')
+    .setOptions({
+        title: 'Scatterplot of original VV values',
+        trendlines: {
+            0: {
+                type: 'linear',
+                color: 'CC0000',
+                showR2: true,
+                visibleInLegend: true
+            }
+        }
+    });
 
 var correctedRegressionChartVV = ui.Chart.feature.byFeature(selected, 'LIA', 'corrected_VV')
-  .setChartType('ScatterChart')
-  .setOptions({
-    title: 'Scatterplot of corrected VV values',
-    trendlines: {0: {
-    type: 'linear',
-    color: 'CC0000',
-    showR2: true,
-    visibleInLegend: true
-    }}
-  });
+    .setChartType('ScatterChart')
+    .setOptions({
+        title: 'Scatterplot of corrected VV values',
+        trendlines: {
+            0: {
+                type: 'linear',
+                color: 'CC0000',
+                showR2: true,
+                visibleInLegend: true
+            }
+        }
+    });
 
 // Check the Gaussian distribution of data - print histogram
 var histogram = ui.Chart.feature.histogram(selected, 'corrected_VV');
 
 // Add charts to the console
 var TSChart = ui.Chart.image.series({
-  imageCollection: CorrectedCollection.select(['VV', 'VH', 'corrected_VV', 'corrected_VH']),
-  region: bufferROI,
-  reducer: ee.Reducer.mean(),
-  scale: 10,
+    imageCollection: CorrectedCollection.select(['VV', 'VH', 'corrected_VV', 'corrected_VH']),
+    region: bufferROI,
+    reducer: ee.Reducer.mean(),
+    scale: 10,
 }).setOptions({
     title: 'Time-series of corrected and uncorrected data'
 });
 
 var LIAChart = ui.Chart.image.series({
-  imageCollection: CorrectedCollection.select('LIA'),
-  region: bufferROI,
-  reducer: ee.Reducer.mean(),
-  scale: 10,
+    imageCollection: CorrectedCollection.select('LIA'),
+    region: bufferROI,
+    reducer: ee.Reducer.mean(),
+    scale: 10,
 }).setOptions({
     title: 'LIA over time'
 });
@@ -327,19 +342,21 @@ print(LIAChart);
 
 
 // Prepare data and export the values
-var geth = function (img) {
-  var values = img.select(['LIA', 'corrected_VH', 'VH', 'corrected_VV', 'VV']).reduceRegion({
-    //collection: bufferROI,
-    reducer: ee.Reducer.mean(),
-    geometry: bufferROI,
-    scale: 10,
-  });
-    return ee.Feature(null, {Date: ee.Date(img.get('system:time_start')).format('YYYY-MM-dd'), 
-    LIA: values.get('LIA'), 
-    linear_VH: values.get('corrected_VH'), 
-    linear_VV: values.get('corrected_VV'),
-    VV: values.get('VH'), 
-    VH: values.get('VV')});
+var geth = function(img) {
+    var values = img.select(['LIA', 'corrected_VH', 'VH', 'corrected_VV', 'VV']).reduceRegion({
+        //collection: bufferROI,
+        reducer: ee.Reducer.mean(),
+        geometry: bufferROI,
+        scale: 10,
+    });
+    return ee.Feature(null, {
+        Date: ee.Date(img.get('system:time_start')).format('YYYY-MM-dd'),
+        LIA: values.get('LIA'),
+        linear_VH: values.get('corrected_VH'),
+        linear_VV: values.get('corrected_VV'),
+        VV: values.get('VH'),
+        VH: values.get('VV')
+    });
 };
 
 var toExport = CorrectedCollection.map(geth);
