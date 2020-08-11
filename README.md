@@ -22,8 +22,8 @@ or by copying the code in the "LIA_Correction_Function_for_GEE.js" to your code 
   - startDate (type Date)
   - endDate (type Date)
   - landCoverType (type Integer) // 312 for coniferous forest and 311 for broadleaf forest
-  - boudningBoxSize (type Integer, optional, default: 10000)
-  - referenceAngle (type Integer, optional, deafault: 9999 = mean angle from found LIAs)
-  - SARCollection (type ImageCollection, optional, default: Sentinel-1 Image Collection with VV and VH bands)
-  - acquistionMode (type String, optional, default: 'IW' as Interferometric Wide Swath)
+  - boudningBoxSize (type Integer, *optional, default: 10000*)
+  - referenceAngle (type Integer, *optional, deafault: 9999* = mean angle from found LIAs)
+  - SARCollection (type ImageCollection, *optional, default: Sentinel-1 Image Collection with VV and VH bands*)
+  - acquistionMode (type String, optional, *default: 'IW' as Interferometric Wide Swath*)
   
