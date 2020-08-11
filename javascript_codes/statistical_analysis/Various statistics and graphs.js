@@ -1,9 +1,9 @@
-// call the function
+// call the LIACorrection function
 var LIACorrection = require('users/danielp/LIA_Correction:LIA_Correction_Function')
 
 var coordinates = [20.00875081483153,48.956919483117055] // for study area 1
 
-// Set parameters
+// Set parameters for the function
 var ROI = ee.Geometry.Point(coordinates),
     startDate = '2019-06-01',
     endDate = '2019-09-01',
@@ -17,8 +17,10 @@ var CorrectedCollection = LIACorrection.LIACorrection(
                           endDate,
                           landCoverType);
 
+// Create buffer around the selected central point (for TS analyses) 
 var bufferROI = ROI.buffer(20);
 
+// Get statistics about the backscatter-LIA dependence
 var getMeanVHScale = CorrectedCollection.aggregate_mean('VHscale');
 var getMeanVVScale = CorrectedCollection.aggregate_mean('VVscale');
 var getMeanR2VH = CorrectedCollection.aggregate_mean('VHR2');
@@ -29,6 +31,7 @@ var getMax_pValueVH = CorrectedCollection.aggregate_max('VHpValue');
 var getMax_pValueVV = CorrectedCollection.aggregate_max('VVpValue');
 var getNumPts = CorrectedCollection.aggregate_mean('numpts');
 
+// Create a dictionary from these statisfics
 var RegressionStats = ({
 'Scale Mean VH': getMeanVHScale,
 'Scale Mean VV': getMeanVVScale,
@@ -41,6 +44,7 @@ var RegressionStats = ({
 
 print('Regression statistics', RegressionStats);
 
+// import land cover databases
 var srtm = ee.Image("USGS/SRTMGL1_003"),
     gfc2018 = ee.Image("UMD/hansen/global_forest_change_2018_v1_6"),
     corineDB = ee.Image("COPERNICUS/CORINE/V20/100m/2018");
@@ -61,8 +65,7 @@ var CorineAndHansen = corineConiferuous.updateMask(maskedForest.select('treecove
 // Convert CorineAndHansen raster to vectors
 var forestsInVectors = CorineAndHansen.reduceToVectors();
 
-// change the numberOfImage to get histogram and graph for exact image
-// Possibility to use ITERATE function
+// Function to generate list of feature classes of forest points
 var list = CorrectedCollection.limit(1).iterate(function(img, container){
   container = ee.List(container);
 
@@ -149,6 +152,7 @@ var VVxLIA = arrayLIA.zip(arrayVV);
 var Corrected_VHxLIA = arrayLIA.zip(arrayCorrected_VH);
 var Corrected_VVxLIA = arrayLIA.zip(arrayCorrected_VV);
 
+// Calculate statistics 
 var VHExtremes = arrayVH.sort();
 var VVExtremes = arrayVV.sort();
 var LIAExtremes = arrayLIA.sort();
@@ -162,7 +166,6 @@ var stdevVH = arrayVH.reduce(ee.Reducer.stdDev());
 var stdevVV = arrayVV.reduce(ee.Reducer.stdDev());
 var stdevCorrectedVH = arrayCorrected_VH.reduce(ee.Reducer.stdDev());
 var stdevCorrectedVV = arrayCorrected_VV.reduce(ee.Reducer.stdDev());
-
 var perc75VV = ee.Number(arrayVV.reduce(ee.Reducer.percentile([75])));
 var perc25VV = ee.Number(arrayVV.reduce(ee.Reducer.percentile([25])));
 var lowerFenceVV = perc25VV.subtract(ee.Number(1.5).multiply(perc75VV.subtract(perc25VV)));
@@ -171,7 +174,6 @@ var CorrPerc75VV = ee.Number(arrayCorrected_VV.reduce(ee.Reducer.percentile([75]
 var CorrPerc25VV = ee.Number(arrayCorrected_VV.reduce(ee.Reducer.percentile([25])));
 var lowerFenceCorrVV = CorrPerc25VV.subtract(ee.Number(1.5).multiply(CorrPerc75VV.subtract(CorrPerc25VV)));
 var upperFenceCorrVV = CorrPerc75VV.add(ee.Number(1.5).multiply(CorrPerc75VV.subtract(CorrPerc25VV)));
-
 var perc75VH = ee.Number(arrayVH.reduce(ee.Reducer.percentile([75])));
 var perc25VH = ee.Number(arrayVH.reduce(ee.Reducer.percentile([25])));
 var lowerFenceVH = perc25VH.subtract(ee.Number(1.5).multiply(perc75VH.subtract(perc25VH)));
@@ -180,7 +182,6 @@ var CorrPerc75VH = ee.Number(arrayCorrected_VH.reduce(ee.Reducer.percentile([75]
 var CorrPerc25VH = ee.Number(arrayCorrected_VH.reduce(ee.Reducer.percentile([25])));
 var lowerFenceCorrVH = CorrPerc25VH.subtract(ee.Number(1.5).multiply(CorrPerc75VH.subtract(CorrPerc25VH)));
 var upperFenceCorrVH = CorrPerc75VH.add(ee.Number(1.5).multiply(CorrPerc75VH.subtract(CorrPerc25VH)));
-
 var betweenFencesVV = arrayVV.filter(ee.Filter.and(ee.Filter.greaterThan('item', lowerFenceVV), 
                       ee.Filter.lessThan('item', upperFenceVV)));
 var betweenFencesVH = arrayVH.filter(ee.Filter.and(ee.Filter.greaterThan('item', lowerFenceVH), 
@@ -191,7 +192,7 @@ var betweenFencesCorrVH = arrayCorrected_VH.filter(ee.Filter.and(ee.Filter.great
                       ee.Filter.lessThan('item', upperFenceCorrVH)));
 
 
-
+// Create a dictionary with calculated values
 var CorrectionStats = ({
 'VH min': VHExtremes.get(0), 
 'VH max' : VHExtremes.get(-1),
