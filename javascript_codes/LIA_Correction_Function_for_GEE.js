@@ -139,14 +139,9 @@ var createLIADESC = function (img) {
   return img.addBands([LIAimg]).setMulti({azimuthViewIMG: azimuthViewIMG});
 };
 
-// Function to clip the collections to the region of interest
-var clipCollection = function(img) {
-  return img.clip(bufferForRndData);
-};
-
 // Apply the function to the Sentinel1 collection
-var LIAImgASC = sentinel1ASCDB.map(createLIAASC).map(clipCollection);
-var LIAImgDESC = sentinel1DESCDB.map(createLIADESC).map(clipCollection);
+var LIAImgASC = sentinel1ASCDB.map(createLIAASC);
+var LIAImgDESC = sentinel1DESCDB.map(createLIADESC);
 
 // Merge databases of Descending and Ascending images, sort by time
 var LIAImages = (LIAImgDESC.merge(LIAImgASC)).sort('system:time_start');
