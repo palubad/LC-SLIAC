@@ -2,9 +2,9 @@
 
 This code repository is an attachment for my Diploma Thesis "A correction of the local incidence angle of SAR data: a land-cover specific approach for time series analysis".
 The repository contains a folder "javascript_codes" where you can find: 
-  - A Google Earth Engine (GEE) function "LIA_Correction_Function_for_GEE.js" to create a SAR image collection where bands have been corrected for effects of terrain
-  - A GEE example usage of the function "LIA_Correction_Example.js"
-  - Folder containing codes of (mainly) statistical analysis which were used for evaluating the effectivity and the accuracy of the proposed method
+  - A JavaScript Google Earth Engine (GEE) function "LIA_Correction_Function_for_GEE.js" to create a SAR image collection where bands have been corrected for effects of terrain
+  - A JavaScript GEE example usage of the function "LIA_Correction_Example.js"
+  - Folder containing JavaScript codes of (mainly) statistical analysis which were used for evaluating the effectivity and the accuracy of the proposed method
 
 ## About the GEE function LIACorrection
 The LIACorrection method represents a correction of the local incidence angle (LIA) for time series analysis of forests. The methodology is based on the use of a linear regression relationship between backscatter and LIA, which is calculated for each image separately. Using the combination of CORINE and Hansen Global Forest databases, a wide range of different LIAs for a specific forest type can be generated for each individual image. The slope of the regression line and the mean of minimum and maximum LIA from all the different image paths are using to correct the terrain effects in the time series analysis. The algorithm is prepared in Google Earth Engine using Sentinel-1 open access data, SRTM digital elevation model, and CORINE and Hansen Global Forest databases. This methodology aims to be achievable for a wide remote sensing community using open access tools and data.
