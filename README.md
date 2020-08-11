@@ -13,5 +13,4 @@ The method was tested in the time series analyses of the forest changes in the s
 ### LIACorrection function and its usage in GEE
 You can use this function after the reqirement call require('users/danielp/LIA_Correction:LIA_Correction_Function'), like:
 ```ruby
-require('users/danielp/LIA_Correction:LIA_Correction_Function')
-```
+require('users/danielp/LIA_Correction:LIA_Correction_Function') ```
