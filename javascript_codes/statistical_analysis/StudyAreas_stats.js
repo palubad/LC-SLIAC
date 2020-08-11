@@ -1,3 +1,5 @@
+var srtm = ee.Image("USGS/SRTMGL1_003");
+
 var coordinates = ee.List([
 [20.00875081483153,48.956919483117055],
 [13.47758, 49.04568],
