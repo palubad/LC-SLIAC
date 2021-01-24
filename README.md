@@ -10,11 +10,11 @@ The LIACorrection method represents a correction of the local incidence angle (L
 The method was tested in the time series analyses of the forest changes in the selected case studies. The corrected backscatter data gave significantly more accurate values than the original ones mainly in the areas with higher values of slope. An application of the method in the time series of the forest changes ensured more accurate detection of the changes in the mountainous areas.
 
 ### LIACorrection function and its usage in GEE
-You can use this function after the reqirement call require('users/danielp/LC-SLIAC:LC-SLIAC'), like:
+You can use this function after the reqirement call require('users/danielp/LC-SLIAC:LC-SLIAC'), i.e.:
 ```ruby
-require('users/danielp/LIA_Correction:LIA_Correction_Function') 
+require('users/danielp/LC-SLIAC:LC-SLIAC') 
 ```
-or by copying the code in the "LIA_Correction_Function_for_GEE.js" to your code editor and call it with defined parameters.
+or by copying the code in the "LC-SLIA.js" to your code editor and call it with defined parameters.
 
 #### Parameters of the function:
   - ROI (type Geometry)
