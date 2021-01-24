@@ -1,4 +1,5 @@
-# Local incidence angle correction LC-SLIAC for forests in Google Earth Engine (repository for the article in Remote Sensing: Paluba et al. (2021))
+# Local incidence angle correction LC-SLIAC for forests in Google Earth Engine 
+## repository for the article in Remote Sensing: Paluba et al. (2021)
 
 This code repository is an attachment for the article "Land cover-specific local incidence angle correction: an approach for time series analysis of forest ecosystems".
 The repository contains a folder "javascript_codes" where you can find: 
