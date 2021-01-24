@@ -38,8 +38,8 @@ or by copying the code in the "LC-SLIA.js" to your code editor and call it with 
 The main output of the LC-SLIAC function is the input Sentinel-1 image collection clipped to the predefined study area size by boudningBoxSize, extended by:
  - Image bands:
       - LIA - the calculated local incidence angle image
-      - corrected_VH - VH band after LC-SLIAC
-      - corrected_VV - VV band after LC-SLIAC
+      - corrected_VH - VH band after LC-SLIAC where active shadow and layover areas are masked out
+      - corrected_VV - VV band after LC-SLIAC where active shadow and layover areas are masked out
   
  - Statistical parameters in the properties:
       - VVscale, VH scale - the scale coefficient calculated from the regression analysis for VV and VH polarization, respectively
