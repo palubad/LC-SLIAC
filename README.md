@@ -18,17 +18,17 @@ or by copying the code in the "LC-SLIA.js" to your code editor and call it with 
 
 #### Parameters of the function:
   - ROI (type Geometry)
-      - Define the ROI for what you want to create a Time Series Analysis
+      - Define the ROI for what you want to create a time series analysis
   - startDate (type Date)
-      - Start date of the Time Series
+      - Start date of the time series
   - endDate (type Date)
-      - End date of the Time Series
+      - End date of the time series
   - landCoverType (type Integer)
       - Define the land cover type. Currently supported for coniferous forest (312) and broadleaf forest (311).
   - boudningBoxSize (type Integer, *optional, default: 10000*)
-      - The bounding box size around the selected area to calculate the backscatter-LIA dependence.
+      - The bounding box size around the selected area to calculate the backscatter-LIA dependence. This area is used to clip the resulted image collection after the correction.
   - referenceAngle (type Integer, *optional, deafault: 9999* = mean angle from found LIAs)
-      - Reference angle to which the backscatter values will be corrected. The default is the mean value from the minimum and maximum value of observed LIA (from the available paths).
+      - Reference angle to which the backscatter values will be corrected. For time series analyses, it is recommended to use the default value - the mean value from the minimum and maximum value of observed LIA (from the available paths).
   - SARCollection (type ImageCollection, *optional, default: Sentinel-1 Image Collection with VV and VH bands*)
       - Select the SAR image collection for which you want to apply the LIA correction. Tested for Sentinel-1 data
   - acquistionMode (type String, optional, *default: 'IW'*)
