@@ -53,4 +53,4 @@ The main output of the LC-SLIAC function is the input Sentinel-1 image collectio
 
 
 #### Important note:
-For long-term time series analysis, e.g. for the whole Sentinel-1 archive, it is recommended to zoom in to the selected study area, as it is done in the example script (LC-SLIAC_Example.js).
+For long-term time series analysis, e.g. for the whole Sentinel-1 archive, it is recommended to zoom in to the selected study area, as it is done in the example script (LC-SLIAC_Example.js). 
