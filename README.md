@@ -3,7 +3,7 @@
 This code repository is an attachment for the article (currently in review) in Remote Sensing: Paluba et al. (2021): "Land cover-specific local incidence angle correction: an approach for time series analysis of forest ecosystems".
 The repository contains a folder "javascript_codes" where you can find: 
   - A JavaScript Google Earth Engine (GEE) function "LC-SLIAC.js" to create a SAR image collection where bands have been corrected for effects of terrain
-  - A JavaScript GEE example usage of the function "LC-SLIAC_Example.js" where three-month time series chart and the image collection are added to the GEE Console
+  - A JavaScript GEE example usage of the function "LC-SLIAC_Example.js" where three-month time series chart before and after the application of LC-SLIAC and the corrected image collection are added to the GEE Console
 
 ## About the Land cover-specific local incidence angle correction (LC-SLIAC) in GEE
 The land cover-specific local incidence angle correction (LC-SLIAC) is based on the linear relationship between the backscatter values and the local incidence angle (LIA) for a given land cover type in the monitored area. Using the combination of CORINE Land Cover and Hansen Global Forest databases, a wide range of different LIAs for a specific forest type can be generated for each individual scene. The algorithm was developed and tested in the cloud-based platform Google Earth Engine (GEE) using Sentinel-1 open access data, Shuttle Radar Topography Mission (SRTM) digital elevation model, as well as CORINE Land Cover and Hansen Global Forest databases. The developed method was created primarily for time-series analysis of forests in mountainous areas. LC-SLIAC was tested in 16 study areas over several protected areas in Central Europe. 
@@ -52,11 +52,11 @@ The main output of the LC-SLIAC function is the input Sentinel-1 image collectio
       - VVscale, VH scale - the scale coefficient calculated from the regression analysis for VV and VH polarization, respectively
       - VVoffset, VHoffset - the offset coefficient calculated from the regression analysis for VV and VH polarization, respectively
       - VVnumberOfForestPoints, VHnumberOfForestPoints - the number of forest areas included in the regression analysis for VV and VH polarization, respectively
-      - VHR2, VVR2 - the resulted coefficient of determination (R<sup>2</sup>) of the regression analysis 
-      - VHpValue, VVpValue - the p-value for the regression analysis
-      - MeanElevationOfForestPoints - mean elevation of selected forest areas
-      - VV_LIAIQR, VH_LIAIQR - LIA interquartile range (IQR) for forest areas
-      - LIA_range_VV, LIA_range_VH - LIA range for forest areas
+      - VHR2, VVR2 - the resulted coefficient of determination (R<sup>2</sup>) of the regression analysis for VV and VH polarization, respectively
+      - VHpValue, VVpValue - the p-value for the regression analysis for VV and VH polarization, respectively
+      - MeanElevationOfForestPoints - mean elevation of selected forest areas for VV and VH polarization, respectively
+      - VV_LIAIQR, VH_LIAIQR - LIA interquartile range (IQR) for forest areas for VV and VH polarization, respectively
+      - LIA_range_VV, LIA_range_VH - LIA range for forest areas for VV and VH polarization, respectively
 
 
 #### Important note:
