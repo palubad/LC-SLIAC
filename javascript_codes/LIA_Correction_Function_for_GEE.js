@@ -6,7 +6,7 @@ var LIACorrection = function(
     boundingBoxSize,
     referenceAngle,
     SARCollection,
-    acquisitionMode) {
+    acquisitionMode) {  
 
     // set the optional parameters of the function
     boundingBoxSize = boundingBoxSize || 10000; // 10000 for a 20x20 km bouding box
@@ -90,17 +90,27 @@ var LIACorrection = function(
         var LIAimg = ((slopeReproj.cos().multiply(s1_inc.cos()))
                 .subtract(slopeReproj.sin().multiply(s1_inc.sin().multiply((aspectReproj.subtract(azimuthViewIMG.multiply(Math.PI / 180))).cos())))).acos()
             .clip(ee.Geometry.Polygon(img.geometry().coordinates().get(0))).multiply(180 / Math.PI).rename('LIA');
-
+        
+        //*********************shadow masking******************//
+        var phi_rRad = azimuthViewIMG.multiply(Math.PI/180).subtract(aspectReproj);
+        var ninetyRad = ee.Image.constant(90).multiply(Math.PI/180);
+        var alpha_rRad = (slopeReproj.tan().multiply(phi_rRad.cos())).atan();
+        var shadowASC = alpha_rRad.gt(ee.Image.constant(-1).multiply(ninetyRad.subtract(s1_inc))).rename('shadow');
+        // layover, where slope > radar viewing angle
+        var layoverASC = alpha_rRad.lt(s1_inc).rename('layover');
+        // combine layover and shadow
+        var maskASC = layoverASC.and(shadowASC);
+        var bufferedMaskASC = _erode(maskASC, 20);
+        img = img.mask(bufferedMaskASC)
+        
         return img.addBands([LIAimg]).setMulti({
             lookAngleAzimuth: azimuthViewAngle
         });
-
     };
 
     //////////////////Function to CREATE LIA for DESCENDING images//////////////////
 
     var createLIADESC = function(img) {
-
         var aspectReproj = aspect.reproject({
             crs: img.select('VV').projection()
         });
@@ -143,10 +153,36 @@ var LIACorrection = function(
                 .subtract(slopeReproj.sin().multiply(s1_inc.sin().multiply((aspectReproj.subtract(azimuthViewIMG.multiply(Math.PI / 180))).cos())))).acos()
             .clip(ee.Geometry.Polygon(img.geometry().coordinates().get(0))).multiply(180 / Math.PI).rename('LIA');
 
+        //*********************shadow masking******************//
+        var phi_rRad = azimuthViewIMG.multiply(Math.PI/180).subtract(aspectReproj);
+        var ninetyRad = ee.Image.constant(90).multiply(Math.PI/180);
+        var alpha_rRad = (slopeReproj.tan().multiply(phi_rRad.cos())).atan();
+        var shadowDESC = alpha_rRad.gt(ee.Image.constant(-1).multiply(ninetyRad.subtract(s1_inc))).rename('shadow');
+        // layover, where slope > radar viewing angle
+        var layoverDESC = alpha_rRad.lt(s1_inc).rename('layover');
+        // combine layover and shadow
+        var maskDESC = layoverDESC.and(shadowDESC);
+        var bufferedMaskDESC = _erode(maskDESC, 20);
+        img = img.mask(bufferedMaskDESC)
+
         return img.addBands([LIAimg]).setMulti({
             lookAngleAzimuth: azimuthViewAngle
         });
     };
+
+
+/////////////////function for shadow/layover masking/////////////
+   // buffer function (thanks Noel)
+    function _erode(img, distance) {
+
+      var d = (img.not().unmask(1)
+          .fastDistanceTransform(30).sqrt()
+          .multiply(ee.Image.pixelArea().sqrt()));
+
+      return img.updateMask(d.gt(distance));
+    } 
+/////////////////function for shadow/layover masking/////////////
+
 
     // Apply the function to the Sentinel1 collection
     var LIAImgASC = sentinel1ASCDB.map(createLIAASC);
@@ -170,10 +206,10 @@ var LIACorrection = function(
     // Create an intersection of these two land cover databases
     var CorineAndHansen = corineConiferuous.updateMask(maskedForest.select('treecover2000')).clip(bufferForRndData);
     //Map.addLayer(corineConiferuous.updateMask(maskedForest.select('treecover2000')), {}, 'CorineAndHansen')
-
+ 
     // Convert CorineAndHansen raster to vectors
-    var forestsInVectors = CorineAndHansen.reduceToVectors();
-
+    var forestsInVectors = CorineAndHansen.reduceToVectors({scale:30});
+    
     ////////////////////////////////////////////////////////////////////////
 
     // Get regression parameters as image property
@@ -209,7 +245,16 @@ var LIACorrection = function(
 
         // Select only forest areas which area did not change = area lying totally in the masked forest region
         var selectedPointsFinal2 = selectedPointsFinal.filter(ee.Filter.eq('area', mostOftenAreaValue));
-
+        
+        // Add DEM info about selected forest areas
+        var areasDEMstats = srtm.clip(bufferForRndData).reduceRegions({
+          collection: selectedPointsFinal2,
+          reducer: ee.Reducer.mean(),
+          scale: 30,
+        });
+        var elevationMean = areasDEMstats.aggregate_mean('mean');
+        
+        
         // Add values of image bands to the "points"
         var pointsWithValue = ee.Image(img).reduceRegions({
             collection: selectedPointsFinal2,
@@ -219,15 +264,56 @@ var LIACorrection = function(
 
         // Filter out points, which have Null values for any of the properties
         var getValues = ee.FeatureCollection(pointsWithValue.filter(ee.Filter.notNull(['VH', 'VV', 'LIA'])));
-
+        
         // Functions to create arrays containing all the values (LIA, VH and VV) of selected points
         var LIA = getValues.aggregate_array('LIA');
         var VH = getValues.aggregate_array('VH');
         var VV = getValues.aggregate_array('VV');
 
+        // Calculate statistics for Tukey's fences
+        var perc75VV = ee.Number(VV.reduce(ee.Reducer.percentile([75])));
+        var perc25VV = ee.Number(VV.reduce(ee.Reducer.percentile([25])));
+        var IQRVV = perc75VV.subtract(perc25VV);
+        var lowerFenceVV = perc25VV.subtract(ee.Number(1.5).multiply(IQRVV));
+        var upperFenceVV = perc75VV.add(ee.Number(1.5).multiply(IQRVV));
+        var perc75VH = ee.Number(VH.reduce(ee.Reducer.percentile([75])));
+        var perc25VH = ee.Number(VH.reduce(ee.Reducer.percentile([25])));
+        var IQRVH = perc75VH.subtract(perc25VH);
+        var lowerFenceVH = perc25VH.subtract(ee.Number(1.5).multiply(IQRVH));
+        var upperFenceVH = perc75VH.add(ee.Number(1.5).multiply(IQRVH));
+
+        // Filter out outliers with Tukey's fences
+        var tukeyPointsVV = pointsWithValue
+        .filter(ee.Filter.lt('VV', upperFenceVV))
+        .filter(ee.Filter.gt('VV', lowerFenceVV));
+        
+        var tukeyPointsVH = pointsWithValue
+        .filter(ee.Filter.lt('VH', upperFenceVH))
+        .filter(ee.Filter.gt('VH', lowerFenceVH));
+        
+        // Functions to create arrays containing all the values (LIA, VH and VV) 
+        // of selected points after aplication of Tukey's fences
+        var T_LIA_VH = tukeyPointsVH.aggregate_array('LIA');
+        var T_LIA_VV = tukeyPointsVV.aggregate_array('LIA');
+        var T_VH = tukeyPointsVH.aggregate_array('VH');
+        var T_VV = tukeyPointsVV.aggregate_array('VV');
+        
+        // Calculate LIA range for VV and VH polarizations
+        var LIA_range_VV = ee.Number(tukeyPointsVH.aggregate_max('LIA')).subtract(ee.Number(tukeyPointsVH.aggregate_min('LIA')));
+        var LIA_range_VH = ee.Number(tukeyPointsVV.aggregate_max('LIA')).subtract(ee.Number(tukeyPointsVV.aggregate_min('LIA')));
+        
+        // Calculate LIA IQR for VV and VH polarizations
+        var perc75LIA_VH = ee.Number(T_LIA_VH.reduce(ee.Reducer.percentile([75])));
+        var perc25LIA_VH = ee.Number(T_LIA_VH.reduce(ee.Reducer.percentile([25])));
+        var VH_LIAIQR = perc75LIA_VH.subtract(perc25LIA_VH);
+        
+        var perc75LIA_VV = ee.Number(T_LIA_VV.reduce(ee.Reducer.percentile([75])));
+        var perc25LIA_VV = ee.Number(T_LIA_VV.reduce(ee.Reducer.percentile([25])));
+        var VV_LIAIQR = perc75LIA_VV.subtract(perc25LIA_VV);
+        
         // Create x,y arrays from lists of values
-        var VHxLIA = LIA.zip(VH);
-        var VVxLIA = LIA.zip(VV);
+        var VHxLIA = T_LIA_VH.zip(T_VH);
+        var VVxLIA = T_LIA_VV.zip(T_VV);
 
         // Add regression coefficient and other statistics to the image properties
         var VHregressionValues = VHxLIA.reduce(ee.Reducer.linearFit());
@@ -236,7 +322,8 @@ var LIACorrection = function(
         var VVscale = ee.Dictionary(VVregressionValues).get('scale');
         var VHoffset = ee.Dictionary(VHregressionValues).get('offset');
         var VVoffset = ee.Dictionary(VVregressionValues).get('offset');
-        var numpts = pointsWithValue.size();
+        var numptsVV = tukeyPointsVV.size();
+        var numptsVH = tukeyPointsVH.size();
         var VHcorrelationCoefficient = VHxLIA.reduce(ee.Reducer.pearsonsCorrelation());
         var VVcorrelationCoefficient = VVxLIA.reduce(ee.Reducer.pearsonsCorrelation());
         var VHR2 = ee.Number(ee.Dictionary(VHcorrelationCoefficient).get('correlation')).pow(2);
@@ -244,16 +331,23 @@ var LIACorrection = function(
         var VHpValue = ee.Number(ee.Dictionary(VHcorrelationCoefficient).get('p-value'));
         var VVpValue = ee.Number(ee.Dictionary(VVcorrelationCoefficient).get('p-value'));
 
+
         return img.setMulti({
             VVscale: VVscale,
             VHscale: VHscale,
             VVoffset: VVoffset,
             VHoffset: VHoffset,
-            numberOfForestPoints: numpts,
+            VVnumberOfForestPoints: numptsVV,
+            VHnumberOfForestPoints: numptsVH,
             VHR2: VHR2,
             VVR2: VVR2,
             VHpValue: VHpValue,
             VVpValue: VVpValue,
+            MeanElevationOfForestPoints: elevationMean,
+            VV_LIAIQR: VV_LIAIQR,
+            VH_LIAIQR: VH_LIAIQR,
+            LIA_range_VV: LIA_range_VV,
+            LIA_range_VH: LIA_range_VH
         });
 
     };
