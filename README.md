@@ -7,8 +7,9 @@ The repository contains a folder "javascript_codes" where you can find:
 
 ## About the Land cover-specific local incidence angle correction (LC-SLIAC) in GEE
 The land cover-specific local incidence angle correction (LC-SLIAC) is based on the linear relationship between the backscatter values and the local incidence angle (LIA) for a given land cover type in the monitored area. Using the combination of CORINE Land Cover and Hansen Global Forest databases, a wide range of different LIAs for a specific forest type can be generated for each individual scene. The algorithm was developed and tested in the cloud-based platform Google Earth Engine (GEE) using Sentinel-1 open access data, Shuttle Radar Topography Mission (SRTM) digital elevation model, as well as CORINE Land Cover and Hansen Global Forest databases. The developed method was created primarily for time-series analysis of forests in mountainous areas. LC-SLIAC was tested in 16 study areas over several protected areas in Central Europe. 
+This methodology is aimed to use primarily in time series analysis of forests. Generally, this method is useful in mountainous areas with moderate to steep sloped terrain with high variation of LIA values. The results after correction by LC-SLIAC showed a statistically significant reduction in variance (of more than 40%) in areas with LIA range > 50° and LIA interquartile range (IQR) > 12°, while in areas with low LIA range (< 30°) and LIA IQR (< 6°), the decrease in variance was very low and statistically not significant. Time series after the correction showed a reduced fluctuation of backscatter values caused by different LIAs in each acquisition path, while this reduction was statistically significant (with up to 95% reduction of variance) in areas with a difference in LIA greater than or equal to 27°.
 
-<b>Methodology:</b> The most important step in the methodology of the LC-SLIAC method was to calculate the LIA for every image pixel, where other parameters from the SRTM DEM (slope and aspect) and SAR image (viewing azimuth) needed to be calculated. For SAR images, the active shadow and layover areas were masked out, followed by the generation of forest mask, which was used to select an appropriate number of forest areas to explain the relationship between LIA and backscatter in the linear regression analysis.
+<b>Methodology:</b> The most important step in the methodology of the LC-SLIAC method was to calculate the LIA for every image pixel, where other parameters from the SRTM DEM (slope and aspect) and SAR image (viewing azimuth) needed to be calculated. For SAR images, the active shadow and layover areas were masked out, followed by the generation of forest mask, which was used to select an appropriate number of forest areas to explain the relationship between LIA and backscatter in the linear regression analysis. Figure 1 shows the steps used to generate the corrected image collection.
 
 ![plot](./methodology/Methodology%20-%20GitHub.jpg)
 Figure 1. Methodology workflow used in this work
@@ -31,7 +32,7 @@ or by copying the code in the "LC-SLIA.js" to your code editor and call it with 
   - endDate (type Date)
       - End date of the time series
   - landCoverType (type Integer)
-      - Define the land cover type. Currently supported for coniferous forest (312) and broadleaf forest (311).
+      - Define the land cover type. Currently tested for coniferous forest (312) and broadleaf forest (311).
   - boudningBoxSize (type Integer, *optional, default: 10000*)
       - The bounding box size around the selected area to calculate the backscatter-LIA dependence. This area is used to clip the resulted image collection after the correction.
   - referenceAngle (type Integer, *optional, deafault: 9999* = mean angle from found LIAs)
