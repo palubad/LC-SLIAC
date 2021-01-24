@@ -10,7 +10,7 @@ The land cover-specific local incidence angle correction (LC-SLIAC) is based on 
 
 <b>Methodology:</b> The most important step in the methodology of the LC-SLIAC method was to calculate the LIA for every image pixel, where other parameters from the SRTM DEM (slope and aspect) and SAR image (viewing azimuth) needed to be calculated. For SAR images, the active shadow and layover areas were masked out, followed by the generation of forest mask, which was used to select an appropriate number of forest areas to explain the relationship between LIA and backscatter in the linear regression analysis.
 
-
+![plot](./methodology/Methodology%20-%20GitHub.jpg)
 Figure 1. Methodology workflow used in this work
 
 
