@@ -6,8 +6,15 @@ The repository contains a folder "javascript_codes" where you can find:
   - A JavaScript GEE example usage of the function "LC-SLIAC_Example.js" where three-month time series chart and the image collection are added to the GEE Console
 
 ## About the Land cover-specific local incidence angle correction (LC-SLIAC) in GEE
-The LIACorrection method represents a correction of the local incidence angle (LIA) for time series analysis of forests. The methodology is based on the use of a linear regression relationship between backscatter and LIA, which is calculated for each image separately. Using the combination of CORINE and Hansen Global Forest databases, a wide range of different LIAs for a specific forest type can be generated for each individual image. The slope of the regression line and the mean of minimum and maximum LIA from all the different image paths are using to correct the terrain effects in the time series analysis. The algorithm is prepared in Google Earth Engine using Sentinel-1 open access data, SRTM digital elevation model, and CORINE and Hansen Global Forest databases. This methodology aims to be achievable for a wide remote sensing community using open access tools and data.
-The method was tested in the time series analyses of the forest changes in the selected case studies. The corrected backscatter data gave significantly more accurate values than the original ones mainly in the areas with higher values of slope. An application of the method in the time series of the forest changes ensured more accurate detection of the changes in the mountainous areas.
+The land cover-specific local incidence angle correction (LC-SLIAC) is based on the linear relationship between the backscatter values and the local incidence angle (LIA) for a given land cover type in the monitored area. Using the combination of CORINE Land Cover and Hansen Global Forest databases, a wide range of different LIAs for a specific forest type can be generated for each individual scene. The algorithm was developed and tested in the cloud-based platform Google Earth Engine (GEE) using Sentinel-1 open access data, Shuttle Radar Topography Mission (SRTM) digital elevation model, as well as CORINE Land Cover and Hansen Global Forest databases. The developed method was created primarily for time-series analysis of forests in mountainous areas. LC-SLIAC was tested in 16 study areas over several protected areas in Central Europe. 
+
+<b>Methodology:</b> The most important step in the methodology of the LC-SLIAC method was to calculate the LIA for every image pixel, where other parameters from the SRTM DEM (slope and aspect) and SAR image (viewing azimuth) needed to be calculated. For SAR images, the active shadow and layover areas were masked out, followed by the generation of forest mask, which was used to select an appropriate number of forest areas to explain the relationship between LIA and backscatter in the linear regression analysis.
+
+
+Figure 1. Methodology workflow used in this work
+
+
+
 
 ### LIACorrection function and its usage in GEE
 You can use this function after the reqirement call require('users/danielp/LC-SLIAC:LC-SLIAC'), i.e.:
