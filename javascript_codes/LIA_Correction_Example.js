@@ -1,17 +1,9 @@
-// call the function
-var LIACorrection = require('users/danielp/LIA_Correction:LIA_Correction_Function')
+// zoom in to get the result for long-term time series
+Map.centerObject(geometry, 17);
 
-// polygon drawed into the Map using the Geometry Tools
-var geometry = ee.Geometry.Polygon(
-    [
-        [
-            [19.67749665195573, 49.01504703386079],
-            [19.67749665195573, 49.014104117442386],
-            [19.67882702762712, 49.014104117442386],
-            [19.67882702762712, 49.01504703386079]
-        ]
-    ], null, false);
-
+// call the function 
+var LIACorrection = require('users/danielp/LIA_Correction:LC-SLIAC_with_shadow&layover_mask')
+ 
 // Set parameters
 var ROI = geometry,
     startDate = '2019-06-01',
