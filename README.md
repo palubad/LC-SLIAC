@@ -2,15 +2,15 @@
 
 This code repository is an attachment for the article in Remote Sensing: Paluba et al. (2021): "Land cover-specific local incidence angle correction: an approach for time series analysis of forest ecosystems".
 The repository contains a folder "javascript_codes" where you can find: 
-  - A JavaScript Google Earth Engine (GEE) function "LIA_Correction_Function_for_GEE.js" to create a SAR image collection where bands have been corrected for effects of terrain
-  - A JavaScript GEE example usage of the function "LIA_Correction_Example.js"
+  - A JavaScript Google Earth Engine (GEE) function "LC-SLIAC.js" to create a SAR image collection where bands have been corrected for effects of terrain
+  - A JavaScript GEE example usage of the function "LC-SLIAC_Example.js"
 
 ## About the Land cover-specific local incidence angle correction (LC-SLIAC) in GEE
 The LIACorrection method represents a correction of the local incidence angle (LIA) for time series analysis of forests. The methodology is based on the use of a linear regression relationship between backscatter and LIA, which is calculated for each image separately. Using the combination of CORINE and Hansen Global Forest databases, a wide range of different LIAs for a specific forest type can be generated for each individual image. The slope of the regression line and the mean of minimum and maximum LIA from all the different image paths are using to correct the terrain effects in the time series analysis. The algorithm is prepared in Google Earth Engine using Sentinel-1 open access data, SRTM digital elevation model, and CORINE and Hansen Global Forest databases. This methodology aims to be achievable for a wide remote sensing community using open access tools and data.
 The method was tested in the time series analyses of the forest changes in the selected case studies. The corrected backscatter data gave significantly more accurate values than the original ones mainly in the areas with higher values of slope. An application of the method in the time series of the forest changes ensured more accurate detection of the changes in the mountainous areas.
 
 ### LIACorrection function and its usage in GEE
-You can use this function after the reqirement call require('users/danielp/LIA_Correction:LIA_Correction_Function'), like:
+You can use this function after the reqirement call require('users/danielp/LC-SLIAC:LC-SLIAC'), like:
 ```ruby
 require('users/danielp/LIA_Correction:LIA_Correction_Function') 
 ```
