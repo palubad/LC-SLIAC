@@ -37,7 +37,7 @@ or by copying the code in the "LC-SLIA.js" to your code editor and call it with 
   - S1Collection (type ImageCollection, *optional, default: Sentinel-1 Image Collection with VV and VH bands*)
       - Define the S1 image collection for which you want to apply the LIA correction. Tested and designed for Sentinel-1 data
   - boudningBoxSize (type Integer, *optional, default: 10000*)
-      - The bounding box size around the selected area to calculate the backscatter-LIA dependence. This area is used to clip the resulted image collection after the correction.
+      - The bounding box size around the selected area to calculate the backscatter-LIA dependence. This area is also used to clip the resulted image collection after the correction.
   - referenceAngle (type Integer, *optional, deafault: 9999* = mean angle from found LIAs)
       - Reference angle to which the backscatter values will be corrected. For time series analyses, it is recommended to use the default value - the mean value from the minimum and maximum value of observed LIA (from the available paths).
   - acquistionMode (type String, optional, *default: 'IW'*)
