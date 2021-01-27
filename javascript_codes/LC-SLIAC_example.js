@@ -2,7 +2,7 @@
 Map.centerObject(geometry, 17);
 
 // call the function 
-var LIACorrection = require('users/danielp/LIA_Correction:LC-SLIAC_with_shadow&layover_mask')
+var LIACorrection = require('users/danielp/LC-SLIAC:LC-SLIAC')
  
 // Set parameters
 var ROI = geometry,
