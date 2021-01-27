@@ -59,6 +59,7 @@ The main output of the LC-SLIAC function is the input Sentinel-1 image collectio
       - MeanElevationOfForestPoints - mean elevation of selected forest areas for VV and VH polarization, respectively
       - VV_LIAIQR, VH_LIAIQR - LIA interquartile range (IQR) for forest areas for VV and VH polarization, respectively
       - LIA_range_VV, LIA_range_VH - LIA range for forest areas for VV and VH polarization, respectively
+      - lookAngleAzimuth - the calculated sensor's look angle
 
 
 #### Important note:
