@@ -14,11 +14,11 @@ var LC_SLIAC = function(
     referenceAngle = referenceAngle || 9999; // 9999 to calculate with the mean angle
     acquisitionMode = acquisitionMode || 'IW';
     S1Collection = S1Collection || ee.ImageCollection('COPERNICUS/S1_GRD')
-        .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
-        .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VH'))
-        .filter(ee.Filter.eq('instrumentMode', acquisitionMode))
-        .filterBounds(ROI)
-        .filterDate(startDate, endDate);
+                                  .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
+                                  .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VH'))
+                                  .filter(ee.Filter.eq('instrumentMode', acquisitionMode))
+                                  .filterBounds(ROI)
+                                  .filterDate(startDate, endDate);
 
 
 
