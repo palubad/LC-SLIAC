@@ -1,26 +1,26 @@
-var LIACorrection = function(
+var LC_SLIAC = function(
     ROI,
     startDate,
     endDate,
     landCoverType,
+    S1Collection,
     boundingBoxSize,
     referenceAngle,
-    SARCollection,
-    acquisitionMode) {  
+    acquisitionMode) {
+
 
     // set the optional parameters of the function
     boundingBoxSize = boundingBoxSize || 10000; // 10000 for a 20x20 km bouding box
     referenceAngle = referenceAngle || 9999; // 9999 to calculate with the mean angle
     acquisitionMode = acquisitionMode || 'IW';
-    SARCollection = SARCollection || S1Collection;
-
-    // select the Sentinel-1 Image Collection
-    var S1Collection = ee.ImageCollection('COPERNICUS/S1_GRD')
+    S1Collection = S1Collection || ee.ImageCollection('COPERNICUS/S1_GRD')
         .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
         .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VH'))
         .filter(ee.Filter.eq('instrumentMode', acquisitionMode))
         .filterBounds(ROI)
         .filterDate(startDate, endDate);
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -403,4 +403,4 @@ var LIACorrection = function(
 };
 
 // export the function
-exports.LIACorrection = LIACorrection;
+exports.LC_SLIAC = LC_SLIAC;
