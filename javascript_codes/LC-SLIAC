@@ -197,7 +197,7 @@ var LC_SLIAC = function(
     // Hansen Global forest - Select areas with forest loss from 2000 till 2018
     var maskedLoss2018 = gfc2018.updateMask(gfc2018.select('lossyear').lt(1));
     // Select pixels with >50% tree cover and mask out region with forest loss
-    var maskedForest = maskedLoss2018.updateMask(gfc2018.mask(gfc2018).mask(gfc2018).gte(50));
+    var maskedForest = maskedLoss2018.updateMask(gfc2018.mask(gfc2018).gte(50));
 
     // Load CORINE CLC2018 and use only the selected land cover type
     var corine = corineDB.select('landcover');
