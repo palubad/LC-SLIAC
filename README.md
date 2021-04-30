@@ -1,6 +1,6 @@
 # Local incidence angle correction LC-SLIAC for forests in Google Earth Engine  
 
-This code repository is an attachment for the article (currently in review) in Remote Sensing: Paluba et al. (2021): "Land cover-specific local incidence angle correction: an approach for time series analysis of forest ecosystems".
+This code repository is an attachment for the article in Remote Sensing: [Paluba et al. (2021): "Land Cover-Specific Local Incidence Angle Correction: A Method for Time-Series Analysis of Forest Ecosystems"](https://www.mdpi.com/2072-4292/13/9/1743/) (doi: 10.3390/rs13091743).
 The repository contains a folder "javascript_codes" where you can find: 
   - A JavaScript Google Earth Engine (GEE) function "LC-SLIAC.js" to create a SAR image collection where bands have been corrected for effects of terrain
   - A JavaScript GEE example usage of the function "LC-SLIAC_example.js" where three-month time series chart before and after the application of LC-SLIAC and the corrected image collection are added to the GEE Console
