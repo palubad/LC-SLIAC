@@ -24,7 +24,7 @@ Figure 1. Methodology workflow used in this work
 
 
 <h1 id="LC-SLIAC_global">UPDATE: LC-SLIAC for global use</h1>
-After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. For the "global" version of the LC-SLIAC, the [Copernicus Global Land Cover Layers](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_Landcover_100m_Proba-V-C3_Global/) (CGLC) was used. The newest version (v 1.8) of the [Hansen Global Forest Change database](https://developers.google.com/earth-engine/datasets/catalog/UMD_hansen_global_forest_change_2020_v1_8/) was used in this update, where data for 2020 are also available.
+After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. For the "global" version of the LC-SLIAC, the [Copernicus Global Land Cover Layers](https://cutt.ly/JbBeSBO) (CGLC) was used. The newest version (v 1.8) of the [Hansen Global Forest Change database](https://developers.google.com/earth-engine/datasets/catalog/UMD_hansen_global_forest_change_2020_v1_8/) was used in this update, where data for 2020 are also available.
 
 In the definition of forest type, there are 4 categories in the CGLC:
  - 111	- Closed forest, evergreen needle leaf. Tree canopy >70 %, almost all needle leaf trees remain green all year. Canopy is never without green foliage.
