@@ -5,6 +5,9 @@ The repository contains a folder "javascript_codes" where you can find:
   - A JavaScript Google Earth Engine (GEE) function "LC-SLIAC.js" to create a SAR image collection where bands have been corrected for effects of terrain
   - A JavaScript GEE example usage of the function "LC-SLIAC_example.js" where three-month time series chart before and after the application of LC-SLIAC and the corrected image collection are added to the GEE Console
 
+## UPDATE: LC-SLIAC_global
+After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. See the details [here](#UPDATE: LC-SLIAC for global use).
+
 ## About the Land cover-specific local incidence angle correction (LC-SLIAC) in GEE
 The land cover-specific local incidence angle correction (LC-SLIAC) is based on the linear relationship between the backscatter values and the local incidence angle (LIA) for a given land cover type in the monitored area. Using the combination of CORINE Land Cover and Hansen Global Forest databases, a wide range of different LIAs for a specific forest type can be generated for each individual scene. The algorithm was developed and tested in the cloud-based platform Google Earth Engine (GEE) using Sentinel-1 open access data, Shuttle Radar Topography Mission (SRTM) digital elevation model, as well as CORINE Land Cover and Hansen Global Forest databases. The developed method was created primarily for time-series analysis of forests over mountainous areas. LC-SLIAC was tested in 16 study areas over several protected areas in Central Europe. 
 
@@ -64,3 +67,5 @@ The main output of the LC-SLIAC function is the input Sentinel-1 image collectio
 
 #### Important note:
 For long-term time series analysis, e.g. for the whole Sentinel-1 archive, it is recommended to zoom in to the selected study area, as it is done in the example script (LC-SLIAC_example.js). 
+
+**#UPDATE: LC-SLIAC for global use **
