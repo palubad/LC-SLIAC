@@ -6,7 +6,7 @@ The repository contains a folder "javascript_codes" where you can find:
   - A JavaScript GEE example usage of the function "LC-SLIAC_example.js", where three-month time series chart before and after the application of LC-SLIAC and the corrected image collection are added to the GEE Console
 
 ## UPDATE: LC-SLIAC_global
-After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. See the details [here](# UPDATE: LC-SLIAC for global use). In the "javascript_codes" folder you can find two more scripts:
+After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. See the details [here](#LC-SLIAC_global). In the "javascript_codes" folder you can find two more scripts:
   - A globally usable JavaScript Google Earth Engine (GEE) function "LC-SLIAC_global.js" to create a SAR image collection where bands have been corrected for effects of terrain
   - A globally usable JavaScript GEE example usage of the function "LC-SLIAC_global_example.js", where three-month time series chart before and after the application of LC-SLIAC and the corrected image (test site in Vietnam)
 
@@ -21,7 +21,7 @@ The land cover-specific local incidence angle correction (LC-SLIAC) is based on 
 Figure 1. Methodology workflow used in this work
 
 
-# UPDATE: LC-SLIAC for global use
+<h1 id="LC-SLIAC_global">UPDATE: LC-SLIAC for global use</h1>
 After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. For the "global" version of the LC-SLIAC, the [Copernicus Global Land Cover Layers: CGLS-LC100 collection 3](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_Landcover_100m_Proba-V-C3_Global) (CGLC) was used. The newest version (v 1.8) of the The Hansen Global Forest Change database was used in this update, where data for 2020 are also available.
 
 In the definition of forest type, there are 4 categories in the CGLC:
