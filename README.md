@@ -21,6 +21,8 @@ The land cover-specific local incidence angle correction (LC-SLIAC) is based on 
 Figure 1. Methodology workflow used in this work
 
 
+
+
 <h1 id="LC-SLIAC_global">UPDATE: LC-SLIAC for global use</h1>
 After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. For the "global" version of the LC-SLIAC, the [Copernicus Global Land Cover Layers: CGLS-LC100 collection 3](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_Landcover_100m_Proba-V-C3_Global) (CGLC) was used. The newest version (v 1.8) of the The Hansen Global Forest Change database was used in this update, where data for 2020 are also available.
 
