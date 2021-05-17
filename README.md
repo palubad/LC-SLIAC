@@ -6,7 +6,7 @@ The repository contains a folder "javascript_codes" where you can find:
   - A JavaScript GEE example usage of the function "LC-SLIAC_example.js", where three-month time series chart before and after the application of LC-SLIAC and the corrected image collection are added to the GEE Console
 
 ## UPDATE: LC-SLIAC_global
-After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. [See the details here](#LC-SLIAC_global). In the "javascript_codes" folder you can find two more scripts:
+After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. [See the details here](#update-lc-sliac-for-global-use). In the "javascript_codes" folder you can find two more scripts:
   - A globally usable JavaScript Google Earth Engine (GEE) function "LC-SLIAC_global.js" to create a SAR image collection where bands have been corrected for effects of terrain
   - A globally usable JavaScript GEE example usage of the function "LC-SLIAC_global_example.js", where three-month time series chart before and after the application of LC-SLIAC and the corrected image (test site in Vietnam)
 
