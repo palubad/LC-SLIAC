@@ -6,7 +6,7 @@ The repository contains a folder "javascript_codes" where you can find:
   - A JavaScript GEE example usage of the function "LC-SLIAC_example.js", where three-month time series chart before and after the application of LC-SLIAC and the corrected image collection are added to the GEE Console
 
 ## UPDATE: LC-SLIAC_global
-After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. See the details [here](#LC-SLIAC_global). In the "javascript_codes" folder you can find two more scripts:
+After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. [See the details here](#LC-SLIAC_global). In the "javascript_codes" folder you can find two more scripts:
   - A globally usable JavaScript Google Earth Engine (GEE) function "LC-SLIAC_global.js" to create a SAR image collection where bands have been corrected for effects of terrain
   - A globally usable JavaScript GEE example usage of the function "LC-SLIAC_global_example.js", where three-month time series chart before and after the application of LC-SLIAC and the corrected image (test site in Vietnam)
 
@@ -54,8 +54,8 @@ or by copying the code in the "LC-SLIA_global.js" to your code editor and call i
       - Start date of the time series
   - endDate (type Date)
       - End date of the time series
-  - year (type Integer) - #### only for the LC-SLIAC_global version
-      - Year for which the CGLC will be used. Available years: 2015-2019. Hopefully, the 2020 database will be available soon.
+  - _ _year (type Integer) - **only for the LC-SLIAC_global version** _ _
+      - _ _Year for which the CGLC will be used. Available years: 2015-2019. Hopefully, the 2020 database will be available soon. _ _
   - landCoverType (type Integer)
       - Define the land cover type. Currently tested for coniferous forest (312) and broadleaf forest (311).
   - S1Collection (type ImageCollection, *optional, default: Sentinel-1 Image Collection with VV and VH bands*)
