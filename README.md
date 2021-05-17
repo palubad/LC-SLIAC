@@ -3,10 +3,12 @@
 This code repository is an attachment for the article in Remote Sensing: [Paluba et al. (2021): "Land Cover-Specific Local Incidence Angle Correction: A Method for Time-Series Analysis of Forest Ecosystems"](https://www.mdpi.com/2072-4292/13/9/1743/) (doi: 10.3390/rs13091743).
 The repository contains a folder "javascript_codes" where you can find: 
   - A JavaScript Google Earth Engine (GEE) function "LC-SLIAC.js" to create a SAR image collection where bands have been corrected for effects of terrain
-  - A JavaScript GEE example usage of the function "LC-SLIAC_example.js" where three-month time series chart before and after the application of LC-SLIAC and the corrected image collection are added to the GEE Console
+  - A JavaScript GEE example usage of the function "LC-SLIAC_example.js", where three-month time series chart before and after the application of LC-SLIAC and the corrected image collection are added to the GEE Console
 
 ## UPDATE: LC-SLIAC_global
-After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. See the details [here](#UPDATE: LC-SLIAC for global use).
+After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. See the details [here](# UPDATE: LC-SLIAC for global use). In the "javascript_codes" folder you can find two more scripts:
+  - A globally usable JavaScript Google Earth Engine (GEE) function "LC-SLIAC_global.js" to create a SAR image collection where bands have been corrected for effects of terrain
+  - A globally usable JavaScript GEE example usage of the function "LC-SLIAC_global_example.js", where three-month time series chart before and after the application of LC-SLIAC and the corrected image (test site in Vietnam)
 
 ## About the Land cover-specific local incidence angle correction (LC-SLIAC) in GEE
 The land cover-specific local incidence angle correction (LC-SLIAC) is based on the linear relationship between the backscatter values and the local incidence angle (LIA) for a given land cover type in the monitored area. Using the combination of CORINE Land Cover and Hansen Global Forest databases, a wide range of different LIAs for a specific forest type can be generated for each individual scene. The algorithm was developed and tested in the cloud-based platform Google Earth Engine (GEE) using Sentinel-1 open access data, Shuttle Radar Topography Mission (SRTM) digital elevation model, as well as CORINE Land Cover and Hansen Global Forest databases. The developed method was created primarily for time-series analysis of forests over mountainous areas. LC-SLIAC was tested in 16 study areas over several protected areas in Central Europe. 
@@ -19,14 +21,29 @@ The land cover-specific local incidence angle correction (LC-SLIAC) is based on 
 Figure 1. Methodology workflow used in this work
 
 
+# UPDATE: LC-SLIAC for global use
+After requests from the GEE community, a new version of the code was added, which can be used globally, not only for countries in the European Union. For the "global" version of the LC-SLIAC, the [Copernicus Global Land Cover Layers: CGLS-LC100 collection 3](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_Landcover_100m_Proba-V-C3_Global) (CGLC) was used. The newest version (v 1.8) of the The Hansen Global Forest Change database was used in this update, where data for 2020 are also available.
+
+In the definition of forest type, there are 4 categories in the CGLC:
+ - 111	- Closed forest, evergreen needle leaf. Tree canopy >70 %, almost all needle leaf trees remain green all year. Canopy is never without green foliage.
+ - 112	- Closed forest, evergreen broad leaf. Tree canopy >70 %, almost all broadleaf trees remain green year round. Canopy is never without green foliage.
+ - 113	- Closed forest, deciduous needle leaf. Tree canopy >70 %, consists of seasonal needle leaf tree communities with an annual cycle of leaf-on and leaf-off periods.
+ - 114	- Closed forest, deciduous broad leaf. Tree canopy >70 %, consists of seasonal broadleaf tree communities with an annual cycle of leaf-on and leaf-off periods.
 
 
-### LIACorrection function and its usage in GEE
+### LC-SLIAC function and its usage in GEE
 You can use this function after the reqirement call require('users/danielp/LC-SLIAC:LC-SLIAC'), i.e.:
 ```ruby
 require('users/danielp/LC-SLIAC:LC-SLIAC') 
 ```
 or by copying the code in the "LC-SLIA.js" to your code editor and call it with defined parameters.
+
+### LC-SLIAC for global use function and its usage in GEE
+You can use this function after the reqirement call require('users/danielp/LC-SLIAC:LC-SLIAC_global'), i.e.:
+```ruby
+require('users/danielp/LC-SLIAC:LC-SLIAC_global') 
+```
+or by copying the code in the "LC-SLIA_global.js" to your code editor and call it with defined parameters.
 
 #### Parameters of the function:
   - ROI (type Geometry)
@@ -35,6 +52,8 @@ or by copying the code in the "LC-SLIA.js" to your code editor and call it with 
       - Start date of the time series
   - endDate (type Date)
       - End date of the time series
+  - year (type Integer) - #### only for the LC-SLIAC_global version
+      - Year for which the CGLC will be used. Available years: 2015-2019. Hopefully, the 2020 database will be available soon.
   - landCoverType (type Integer)
       - Define the land cover type. Currently tested for coniferous forest (312) and broadleaf forest (311).
   - S1Collection (type ImageCollection, *optional, default: Sentinel-1 Image Collection with VV and VH bands*)
@@ -67,5 +86,3 @@ The main output of the LC-SLIAC function is the input Sentinel-1 image collectio
 
 #### Important note:
 For long-term time series analysis, e.g. for the whole Sentinel-1 archive, it is recommended to zoom in to the selected study area, as it is done in the example script (LC-SLIAC_example.js). 
-
-**#UPDATE: LC-SLIAC for global use **
