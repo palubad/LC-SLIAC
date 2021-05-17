@@ -54,10 +54,11 @@ or by copying the code in the "LC-SLIA_global.js" to your code editor and call i
       - Start date of the time series
   - endDate (type Date)
       - End date of the time series
-_  - year (type Integer) - **only for the LC-SLIAC_global version**
-      - Year for which the CGLC will be used. Available years: 2015-2019. Hopefully, the 2020 database will be available soon._
+  - * *year (type Integer) - **only for the LC-SLIAC_global version**
+      - * *Year for which the CGLC will be used. Available years: 2015-2019. Hopefully, the 2020 database will be available soon.
   - landCoverType (type Integer)
       - Define the land cover type. Currently tested for coniferous forest (312) and broadleaf forest (311).
+      - For the LC-SLIAC_global function, see the legend here
   - S1Collection (type ImageCollection, *optional, default: Sentinel-1 Image Collection with VV and VH bands*)
       - Define the S1 image collection for which you want to apply the LIA correction. Tested and designed for Sentinel-1 data
   - boudningBoxSize (type Integer, *optional, default: 10000*)
